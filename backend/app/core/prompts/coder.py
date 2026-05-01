@@ -170,6 +170,7 @@ FIG_SQUARE = (6, 6)
 - 低分辨率 PNG（用 300dpi，保存为 PNG 即可）
 
 ## 必须遵守
+- 只要用 matplotlib / seaborn 画中文图，必须先设置 `plt.rcParams['font.sans-serif'] = ['Noto Sans CJK JP']` 和 `plt.rcParams['axes.unicode_minus'] = False`
 - 去掉上右边框（已通过全局配置实现）
 - 使用统一的 COLORS 配色方案
 - 折线图用 `fill_between` 添加置信带
