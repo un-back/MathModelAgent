@@ -71,9 +71,54 @@ df['\\u5a74\\u513f\\u884c\\u4e3a\\u7279\\u5f81']  # No unicode escapes
 ```python
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib import font_manager
+from pathlib import Path
+import urllib.request
+import time
+
+def ensure_cjk_font():
+    font_manager.fontManager = font_manager._load_fontmanager(try_read_cache=False)
+    preferred = [
+        'Microsoft YaHei',
+        'SimHei',
+        'Noto Sans CJK SC',
+        'WenQuanYi Zen Hei',
+        'Arial Unicode MS',
+    ]
+    installed = {{f.name for f in font_manager.fontManager.ttflist}}
+    for name in preferred:
+        if name in installed:
+            return name
+
+    # 容器中无中文字体时，自动下载并注册一个可用字体
+    font_dir = Path.cwd() / '.fonts'
+    font_dir.mkdir(parents=True, exist_ok=True)
+    font_path = font_dir / 'NotoSansCJKsc-Regular.otf'
+    if not font_path.exists():
+        url = 'https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf'
+        last_err = None
+        for _ in range(5):
+            try:
+                urllib.request.urlretrieve(url, font_path.as_posix())
+                if font_path.stat().st_size > 5_000_000:
+                    break
+            except Exception as e:
+                last_err = e
+            if font_path.exists():
+                font_path.unlink(missing_ok=True)
+            time.sleep(1)
+        if not font_path.exists():
+            raise RuntimeError(f'下载中文字体失败: {{last_err}}')
+    font_manager.fontManager.addfont(font_path.as_posix())
+    return 'Noto Sans CJK SC'
+
+selected_font = ensure_cjk_font()
+
+# Apply seaborn theme first, then force rcParams to avoid font being overridden.
+sns.set_theme(style='ticks')
 
 plt.rcParams.update({{
-    'font.family': 'Arial',
+    'font.family': 'sans-serif',
     'font.size': 11,
     'axes.titlesize': 12,
     'axes.titleweight': 'bold',
@@ -90,9 +135,8 @@ plt.rcParams.update({{
     'savefig.bbox': 'tight',
     'savefig.pad_inches': 0.1,
 }})
-plt.rcParams['font.sans-serif'] = ['Arial Unicode MS', 'SimHei', 'DejaVu Sans']
+plt.rcParams['font.sans-serif'] = [selected_font, 'Microsoft YaHei', 'SimHei', 'Noto Sans CJK SC', 'WenQuanYi Zen Hei', 'Arial Unicode MS', 'DejaVu Sans']
 plt.rcParams['axes.unicode_minus'] = False
-sns.set_theme(style='ticks')
 
 COLORS = {{
     'primary': '#2E5B88',
