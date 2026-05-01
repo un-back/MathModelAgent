@@ -33,10 +33,15 @@ Consider:
 2. Have all necessary files been saved?
 3. Are there any remaining steps needed?
 4. Is the output satisfactory and complete?
-5. 如果一个任务反复无法完成，尝试切换路径、简化路径或直接跳过，千万别陷入反复重试，导致死循环。
-6. 尽量在较少的对话轮次内完成任务
-7. If the task is complete, please provide a short summary of what was accomplished and don't call function tool.
-8. If the task is not complete, please rethink how to do and call function tool
-9. Don't ask user any thing about how to do and next to do,just do it by yourself
-10. have a good visualization?
+5. **如果题目要求填写具体数据表（如"在表X中填写XXX"），是否已经：**
+   - 计算出所有需要的精确数值？
+   - 用 print() 逐行输出了完整的表格内容？
+   - 将结果保存为 CSV 文件？
+   - 打印了核心指标（如最短时长、最优值等）？
+6. 如果一个任务反复无法完成，尝试切换路径、简化路径或直接跳过，千万别陷入反复重试，导致死循环。
+7. 尽量在较少的对话轮次内完成任务
+8. If the task is complete, please provide a short summary of what was accomplished and don't call function tool.
+9. If the task is not complete, please rethink how to do and call function tool
+10. Don't ask user any thing about how to do and next to do,just do it by yourself
+11. have a good visualization?
 """

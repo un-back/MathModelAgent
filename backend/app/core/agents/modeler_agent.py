@@ -67,6 +67,7 @@ class ModelerAgent(Agent):
         for attempt in range(max_parse_retries):
             response = await self.model.chat(
                 history=self.chat_history,
+                response_format={"type": "json_object"},  # DeepSeek JSON Output
                 agent_name=self.__class__.__name__,
             )
 
@@ -83,7 +84,7 @@ class ModelerAgent(Agent):
                 f"JSON 解析失败 (第{attempt + 1}次)，请求模型重新生成"
             )
             await self.append_chat_history(
-                {"role": "assistant", "content": json_str}
+                LLM.message_to_dict(response.choices[0].message)
             )
             await self.append_chat_history(
                 {

@@ -37,6 +37,13 @@ class Flows:
                 "coder_prompt": f"""
                         参考建模手给出的解决方案{solutions.get(key, "")}
                         完成如下问题{value}
+                        
+                        **重要**: 如果建模方案中提到了「精确结果输出方案」或题目要求填写具体数据表，
+                        你必须在求解完成后：
+                        1. 用 print() 逐行输出每张表的完整内容（含列名）
+                        2. 将每张表保存为 CSV 文件（utf-8-sig 编码）
+                        3. 打印核心指标（如最短时长、最优值等）
+                        4. 进行结果校验并打印校验结果
                     """,
             }
             for key, value in questions_quesx.items()

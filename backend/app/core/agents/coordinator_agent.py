@@ -29,6 +29,7 @@ class CoordinatorAgent(Agent):
             try:
                 response = await self.model.chat(
                     history=self.chat_history,
+                    response_format={"type": "json_object"},  # DeepSeek JSON Output
                     agent_name=self.__class__.__name__,
                 )
                 json_str = response.choices[0].message.content

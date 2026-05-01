@@ -25,6 +25,7 @@ class LLM:
         base_url: str,
         task_id: str,
         max_tokens: int | None = None,
+        reasoning_effort: str | None = "max",
     ):
         self.api_key = api_key
         self.model = model
@@ -32,6 +33,23 @@ class LLM:
         self.chat_count = 0
         self.max_tokens = max_tokens
         self.task_id = task_id
+        self.reasoning_effort = reasoning_effort  # DeepSeek V4 思考强度: "high" | "max"
+
+    @staticmethod
+    def message_to_dict(message) -> dict:
+        """将 API 响应消息转为 dict，确保 reasoning_content 不丢失（DeepSeek V4 思考模式必需）。
+
+        DeepSeek V4 默认开启思考模式，模型输出的 reasoning_content 在工具调用场景下
+        必须在后续请求中原样回传，否则 API 返回 400。
+        """
+        if isinstance(message, dict):
+            return message
+        msg_dict = message.model_dump() if hasattr(message, 'model_dump') else dict(message)
+        # 显式保留 reasoning_content（部分 litellm 版本的 model_dump 可能遗漏此字段）
+        reasoning = getattr(message, 'reasoning_content', None)
+        if reasoning is not None:
+            msg_dict['reasoning_content'] = reasoning
+        return msg_dict
 
     async def chat(
         self,
@@ -41,6 +59,7 @@ class LLM:
         max_retries: int = 8,  # 添加最大重试次数
         retry_delay: float = 1.0,  # 添加重试延迟
         top_p: float | None = None,  # 添加top_p参数,
+        response_format: dict | None = None,  # JSON Output: {"type": "json_object"}
         agent_name: AgentType = AgentType.SYSTEM,  # CoderAgent or WriterAgent
         sub_title: str | None = None,
     ) -> str:
@@ -58,6 +77,16 @@ class LLM:
             "top_p": top_p,
             "metadata": {"agent_name": agent_name},
         }
+
+        # DeepSeek V4 思考强度 (high / max)，通过 extra_body 透传以绕过 litellm 参数校验
+        if self.reasoning_effort:
+            extra = kwargs.get("extra_body", {})
+            extra["reasoning_effort"] = self.reasoning_effort
+            kwargs["extra_body"] = extra
+
+        # JSON Output 模式（CoordinatorAgent / ModelerAgent）
+        if response_format:
+            kwargs["response_format"] = response_format
 
         if tools:
             kwargs["tools"] = tools
@@ -182,6 +211,16 @@ class LLM:
             ic(f"🔧 修复完成: {len(history)} -> {len(fixed_history)} 条消息")
         else:
             ic(f"✅ 验证通过，无需修复")
+
+        # --- DeepSeek V4 思考模式兼容：清理无效的 reasoning_content ---
+        # 规则：只有携带 tool_calls 的 assistant 消息才需要保留 reasoning_content，
+        # 其余消息中的 reasoning_content 应移除，避免 API 400 错误。
+        for msg in fixed_history:
+            if isinstance(msg, dict) and msg.get("role") == "assistant":
+                has_tool_calls = bool(msg.get("tool_calls"))
+                if not has_tool_calls and "reasoning_content" in msg:
+                    ic(f"🧹 移除无 tool_calls 消息中的 reasoning_content")
+                    del msg["reasoning_content"]
 
         return fixed_history
 

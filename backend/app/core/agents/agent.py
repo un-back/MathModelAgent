@@ -45,8 +45,9 @@ class Agent:
                 agent_name=self.__class__.__name__,
                 sub_title=sub_title,
             )
+            # 使用 message_to_dict 完整保存消息（含 reasoning_content，DeepSeek V4 思考模式必需）
+            self.chat_history.append(LLM.message_to_dict(response.choices[0].message))
             response_content = response.choices[0].message.content
-            self.chat_history.append({"role": "assistant", "content": response_content})
             logger.info(f"{self.__class__.__name__}:完成:执行对话")
             return response_content
         except Exception as e:

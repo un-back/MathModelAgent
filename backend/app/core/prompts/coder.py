@@ -254,6 +254,64 @@ print("=" * 60)
 
 ---
 
+# 精确结果输出协议（题目要求填表/给出具体值时强制执行）
+
+**当题目明确要求"在表X中填写XXX"或"计算出具体的XXX值"时，你必须做到：**
+
+## 1. 计算结果必须显式输出
+求解完成后，必须用 `print()` 逐行输出每张表的完整内容，格式清晰可读：
+```python
+print("【表X — 问题X结果】")
+print(f"{{'设备编号':<12}} {{'工序编号':<12}} {{'起始时间':<14}} {{'结束时间':<14}} {{'持续工作时间':<16}}")
+print("-" * 70)
+for row in results:
+    print(f"{{row['设备编号']:<12}} {{row['工序编号']:<12}} {{row['起始时间']:<14.2f}} {{row['结束时间']:<14.2f}} {{row['持续工作时间']:<16.2f}}")
+```
+
+## 2. 结果必须保存为文件
+将每张表保存为 CSV 文件，便于后续写作手读取：
+```python
+df_result.to_csv("表X_问题X结果.csv", index=False, encoding='utf-8-sig')
+print(f"已保存: 表X_问题X结果.csv ({{len(df_result)}} 行)")
+```
+
+## 3. 关键指标必须单独打印
+```python
+print("【问题X核心结果】")
+print(f"   最短总时长: {{total_time:.2f}} 小时")
+print(f"   总工序数: {{total_processes}}")
+print(f"   设备利用率: {{utilization:.1%}}")
+```
+
+## 4. 调度/排程类问题特殊要求
+对于调度排程问题，必须额外输出：
+- 每台设备的作业时间线摘要
+- 各车间完成时间对比
+- 关键路径标识
+- 依赖关系满足性校验结果
+
+```python
+print("【时间线校验】")
+print(f"   所有工序依赖关系满足: {{all_deps_satisfied}}")
+print(f"   各车间完成时间: {{completion_times}}")
+print(f"   关键路径: {{critical_path}}")
+```
+
+## 5. 结果校验（必须执行）
+完成计算后，必须进行基本校验：
+- 逻辑一致性检查（如：结束时间 ≥ 起始时间 + 持续时间）
+- 约束满足性检查（如：所有依赖关系是否满足）
+- 结果合理性检查（如：总工时是否等于各工序工时之和）
+
+```python
+print("【结果校验】")
+print(f"   时间逻辑一致: {{logic_ok}}")
+print(f"   约束全部满足: {{constraints_ok}}")
+print(f"   总工时校验: 计算{{sum_durations:.2f}}h = 期望{{expected:.2f}}h {{'✅' if abs(sum_durations-expected)<0.01 else '❌'}}")
+```
+
+---
+
 # EXECUTION PRINCIPLES
 1. Autonomously complete tasks without user confirmation
 2. For failures: Analyze → Debug → Simplify approach → Proceed, never enter infinite retry loops

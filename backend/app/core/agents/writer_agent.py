@@ -110,8 +110,9 @@ class WriterAgent(Agent):  # 同样继承自Agent类
                 )
 
                 # 更新对话历史 - 添加助手的响应
-                await self.append_chat_history(response.choices[0].message.model_dump())
-                ic(response.choices[0].message.model_dump())
+                msg_dict = LLM.message_to_dict(response.choices[0].message)
+                await self.append_chat_history(msg_dict)
+                ic(msg_dict)
 
                 try:
                     papers = await self.scholar.search_papers(query)
@@ -139,10 +140,11 @@ class WriterAgent(Agent):  # 同样继承自Agent类
                     agent_name=self.__class__.__name__,
                     sub_title=sub_title,
                 )
+                self.chat_history.append(LLM.message_to_dict(next_response.choices[0].message))
                 response_content = next_response.choices[0].message.content
         else:
             response_content = response.choices[0].message.content
-        self.chat_history.append({"role": "assistant", "content": response_content})
+            self.chat_history.append(LLM.message_to_dict(response.choices[0].message))
         logger.info(f"{self.__class__.__name__}:完成:执行对话")
         return WriterResponse(response_content=response_content, footnotes=footnotes)
 
@@ -159,7 +161,7 @@ class WriterAgent(Agent):  # 同样继承自Agent类
                 history=self.chat_history, agent_name=self.__class__.__name__
             )
             await self.append_chat_history(
-                {"role": "assistant", "content": response.choices[0].message.content}
+                LLM.message_to_dict(response.choices[0].message)
             )
             return response.choices[0].message.content
         except Exception as e:
