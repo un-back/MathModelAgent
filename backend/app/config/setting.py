@@ -42,8 +42,8 @@ class Settings(BaseSettings):
     WRITER_MAX_TOKENS: Optional[int] = None
     WRITER_REASONING_EFFORT: Optional[str] = None  # DeepSeek 专有，GPT API 不要设
 
-    MAX_CHAT_TURNS: int = 500
-    MAX_RETRIES: int = 7
+    MAX_CHAT_TURNS: int = 300
+    MAX_RETRIES: int = 5
     E2B_API_KEY: Optional[str] = None
     LOG_LEVEL: str = "DEBUG"
     DEBUG: bool = True
