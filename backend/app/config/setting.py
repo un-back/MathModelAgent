@@ -42,8 +42,8 @@ class Settings(BaseSettings):
     WRITER_MAX_TOKENS: Optional[int] = None
     WRITER_REASONING_EFFORT: Optional[str] = "max"
 
-    MAX_CHAT_TURNS: int = 180
-    MAX_RETRIES: int = 8
+    MAX_CHAT_TURNS: int = 500
+    MAX_RETRIES: int = 10
     E2B_API_KEY: Optional[str] = None
     LOG_LEVEL: str = "DEBUG"
     DEBUG: bool = True

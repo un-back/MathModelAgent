@@ -35,9 +35,8 @@ Consider:
 4. Is the output satisfactory and complete?
 5. **如果题目要求填写具体数据表（如"在表X中填写XXX"），是否已经：**
    - 计算出所有需要的精确数值？
-   - 用 print() 逐行输出了完整的表格内容？
+   - 用 print() 逐行输出了完整的问题结果？
    - 将结果保存为 CSV 文件？
-   - 打印了核心指标（如最短时长、最优值等）？
 6. 如果一个任务反复无法完成，尝试切换路径、简化路径或直接跳过，千万别陷入反复重试，导致死循环。
 7. 尽量在较少的对话轮次内完成任务
 8. If the task is complete, please provide a short summary of what was accomplished and don't call function tool.
