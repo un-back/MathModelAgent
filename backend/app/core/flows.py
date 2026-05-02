@@ -47,21 +47,30 @@ class Flows:
             }
             for key, value in questions_quesx.items()
         }
-        flows = {
-            "eda": {
+
+        # --- 根据建模手输出决定是否生成 EDA 和敏感性分析 ---
+        flows: dict[str, dict] = {}
+
+        eda_solution = solutions.get("eda", "")
+        if eda_solution.strip() != "跳过":
+            flows["eda"] = {
                 "coder_prompt": f"""
-                        参考建模手给出的解决方案{solutions.get("eda", "对数据进行探索性分析")}
+                        参考建模手给出的解决方案{eda_solution or "对数据进行探索性分析"}
                         对当前目录下数据进行EDA分析(数据清洗,可视化),清洗后的数据保存当前目录下,**不需要复杂的模型**
                     """,
-            },
-            **ques_flow,
-            "sensitivity_analysis": {
+            }
+
+        flows.update(ques_flow)
+
+        sa_solution = solutions.get("sensitivity_analysis", "")
+        if sa_solution.strip() not in ("跳过", ""):
+            flows["sensitivity_analysis"] = {
                 "coder_prompt": f"""
-                        参考建模手给出的解决方案{solutions.get("sensitivity_analysis", "对模型进行灵敏度分析")}
+                        参考建模手给出的解决方案{sa_solution or "对模型进行灵敏度分析"}
                         完成敏感性分析
                     """,
-            },
-        }
+            }
+
         return flows
 
     def get_write_flows(

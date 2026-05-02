@@ -22,28 +22,28 @@ class Settings(BaseSettings):
     COORDINATOR_MODEL: Optional[str] = None
     COORDINATOR_BASE_URL: Optional[str] = None
     COORDINATOR_MAX_TOKENS: Optional[int] = None
-    COORDINATOR_REASONING_EFFORT: Optional[str] = "max"
+    COORDINATOR_REASONING_EFFORT: Optional[str] = None  # DeepSeek 专有，GPT API 不要设
 
     MODELER_API_KEY: Optional[str] = None
     MODELER_MODEL: Optional[str] = None
     MODELER_BASE_URL: Optional[str] = None
     MODELER_MAX_TOKENS: Optional[int] = None
-    MODELER_REASONING_EFFORT: Optional[str] = "max"
+    MODELER_REASONING_EFFORT: Optional[str] = None  # DeepSeek 专有，GPT API 不要设
 
     CODER_API_KEY: Optional[str] = None
     CODER_MODEL: Optional[str] = None
     CODER_BASE_URL: Optional[str] = None
     CODER_MAX_TOKENS: Optional[int] = None
-    CODER_REASONING_EFFORT: Optional[str] = "max"
+    CODER_REASONING_EFFORT: Optional[str] = None  # DeepSeek 专有，GPT API 不要设
 
     WRITER_API_KEY: Optional[str] = None
     WRITER_MODEL: Optional[str] = None
     WRITER_BASE_URL: Optional[str] = None
     WRITER_MAX_TOKENS: Optional[int] = None
-    WRITER_REASONING_EFFORT: Optional[str] = "max"
+    WRITER_REASONING_EFFORT: Optional[str] = None  # DeepSeek 专有，GPT API 不要设
 
     MAX_CHAT_TURNS: int = 500
-    MAX_RETRIES: int = 10
+    MAX_RETRIES: int = 7
     E2B_API_KEY: Optional[str] = None
     LOG_LEVEL: str = "DEBUG"
     DEBUG: bool = True

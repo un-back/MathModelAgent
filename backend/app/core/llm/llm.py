@@ -81,11 +81,15 @@ class LLM:
             "model": self.model,
             "messages": history,
             "stream": False,
-            "top_p": top_p,
             "metadata": {"agent_name": agent_name},
         }
 
+        # top_p 仅在显式传入非 None 值时设置，避免某些 API 拒绝 null
+        if top_p is not None:
+            kwargs["top_p"] = top_p
+
         # DeepSeek V4 思考强度 (high / max)，通过 extra_body 透传以绕过 litellm 参数校验
+        # 仅当 reasoning_effort 有值时才会发送，GPT API 用户请保持为 None
         if self.reasoning_effort:
             extra = kwargs.get("extra_body", {})
             extra["reasoning_effort"] = self.reasoning_effort

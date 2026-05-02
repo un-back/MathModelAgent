@@ -26,9 +26,10 @@ class CoderAgent(Agent):  # 同样继承自Agent类
         work_dir: str,  # 工作目录
         max_chat_turns: int = settings.MAX_CHAT_TURNS,  # 最大聊天次数
         max_retries: int = settings.MAX_RETRIES,  # 最大反思次数
+        max_memory: int = 50,  # 最大记忆轮次（防压缩丢任务）
         code_interpreter: BaseCodeInterpreter = None,
     ) -> None:
-        super().__init__(task_id, model, max_chat_turns)
+        super().__init__(task_id, model, max_chat_turns, max_memory=max_memory)
         self.work_dir = work_dir
         self.max_retries = max_retries
         self.is_first_run = True
