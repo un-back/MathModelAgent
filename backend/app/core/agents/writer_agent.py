@@ -25,7 +25,7 @@ class WriterAgent(Agent):  # 同样继承自Agent类
         comp_template: CompTemplate = CompTemplate,
         format_output: FormatOutPut = FormatOutPut.Markdown,
         scholar: OpenAlexScholar = None,
-        max_memory: int = 25,  # 添加最大记忆轮次
+        max_memory: int = 50,  # 添加最大记忆轮次
     ) -> None:
         super().__init__(task_id, model, max_chat_turns, max_memory)
         self.format_out_put = format_output
